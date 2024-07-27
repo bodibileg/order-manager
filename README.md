@@ -1,30 +1,102 @@
-# React + TypeScript + Vite
+# Order Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a Single Page Application (SPA) for managing orders, developed using React and TypeScript. The application allows users to view, create, update, filter, search, and delete orders. It leverages an external web API for order management and includes testing using Vitest.
 
-Currently, two official plugins are available:
+## Table of Contents
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Running the Application](#running-the-application)
+  - [Running Tests](#running-tests)
+  - [Build](#build)
+  - [Deploy](#deploy)
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- View orders in table
+- Create new order entities
+- Search for orders by ID
+- Filter orders by type
+- Delete one or multiple orders
+- Save new order draft
+- Switch theme
 
-- Configure the top-level `parserOptions` property like this:
+## Technologies Used
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json', './tsconfig.app.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+- React
+- TypeScript
+- Material UI
+- Redux
+- React Table
+- React Query
+- Vitest
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (version 18 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+
+   ```sh
+   git clone https://github.com/bodibileg/order-manager.git
+   cd order-manager
+   ```
+
+2. Install dependencies:
+
+   ```sh
+   npm install
+   ```
+
+### Running the Application
+
+1. Create a `.env` file in the root directory and add the following environment variables:
+
+    ```sh
+    touch .env
+    ```
+
+    ```env
+    VITE_BASE_API_URL=https://red-candidate-web.azurewebsites.net/api
+    VITE_API_KEY=<api-key>
+    ```
+
+2. Start the development server:
+
+   ```sh
+   npm run dev
+   ```
+
+   The application will be available at `http://localhost:5173/order-manager/`.
+
+### Running Tests
+
+To run the tests using Vitest, use the following command:
+
+```sh
+npm test
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Build
+
+To build the project, use the following command:
+
+```sh
+npm run build
+```
+
+### Deploy
+
+To deploy to `https://bodibileg.github.io/order-manager/`, use the following command:
+
+```sh
+npm run deploy
+```

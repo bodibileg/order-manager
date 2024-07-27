@@ -63,7 +63,7 @@ const OrderControls = <TData,>({
           ),
         }}
       />
-      <Box sx={{minWidth: 120}}>
+      <Box sx={{ minWidth: 120 }}>
         <FormControl fullWidth>
           <InputLabel id="order-type-select">Order Type</InputLabel>
           <Select

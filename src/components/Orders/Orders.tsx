@@ -43,7 +43,7 @@ const Orders = ({
   const [originalData, setOriginalData] = useState<Order[]>([]);
   const [delayed, setDelayed] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const draftOrder = useSelector((state: RootState) => state.order.draftOrder);
   const dispatch: AppDispatch = useDispatch();
 
