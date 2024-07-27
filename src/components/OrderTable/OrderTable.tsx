@@ -1,4 +1,15 @@
 import { flexRender, Table } from "@tanstack/react-table";
+import {
+  Table as MuiTable,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import "./styles.css";
 
 interface OrderTableProps<TData> {
@@ -6,43 +17,57 @@ interface OrderTableProps<TData> {
 }
 
 const OrderTable = <TData,>({ table }: OrderTableProps<TData>) => {
+  const theme = useTheme();
+
   return (
-    <table>
-      <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id}>
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody>
-        {table.getRowModel().rows.length === 0 && (
-          <tr>
-            <td colSpan={table.getHeaderGroups()[0].headers.length}>
-              <div id="empty-message">No Order Found. Create an Order</div>
-            </td>
-          </tr>
-        )}
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <TableContainer component={Paper}>
+      <MuiTable>
+        <TableHead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableCell
+                  key={header.id}
+                  sx={{
+                    backgroundColor:
+                      theme.palette.mode === "light"
+                        ? theme.palette.grey[200]
+                        : theme.palette.grey[800],
+                  }}
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableHead>
+        <TableBody>
+          {table.getRowModel().rows.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={table.getHeaderGroups()[0].headers.length}>
+                <Typography variant="body2" align="center" id="empty-message">
+                  No Order Found. Create an Order
+                </Typography>
+              </TableCell>
+            </TableRow>
+          )}
+          {table.getRowModel().rows.map((row) => (
+            <TableRow key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <TableCell key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </MuiTable>
+    </TableContainer>
   );
 };
 

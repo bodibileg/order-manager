@@ -1,11 +1,12 @@
 import { Row } from "@tanstack/react-table";
+import Checkbox from "@mui/material/Checkbox";
 
 const RowCheckbox = <TData,>({ row }: { row: Row<TData> }) => {
   return (
-    <input
-      type="checkbox"
+    <Checkbox
       checked={row.getIsSelected()}
       onChange={row.getToggleSelectedHandler()}
+      color="primary"
     />
   );
 };

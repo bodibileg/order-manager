@@ -8,6 +8,7 @@ import {
   SelectChangeEvent,
   TextField,
   InputAdornment,
+  useTheme,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
@@ -29,17 +30,27 @@ const OrderControls = <TData,>({
   handleDeleteSelected,
   table,
 }: OrderControlsProps<TData>) => {
+  const theme = useTheme();
+
   const handleOrderTypeChange = (event: SelectChangeEvent) => {
     setOrderType(event.target.value as string);
   };
 
   return (
-    <div className="controls">
+    <Box
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+        gap: 2,
+        padding: 2,
+        backgroundColor: theme.palette.background.paper,
+      }}
+    >
       <TextField
         label="Order ID"
-        placeholder="Search Order ID ..."
+        placeholder="Search Order ID"
         variant="outlined"
-        sx={{ minWidth: 150 }}
         value={table.getColumn("orderId")?.getFilterValue() || ""}
         onChange={(event) => {
           table.getColumn("orderId")?.setFilterValue(event.target.value);
@@ -52,7 +63,7 @@ const OrderControls = <TData,>({
           ),
         }}
       />
-      <Box sx={{ minWidth: 150 }}>
+      <Box sx={{minWidth: 120}}>
         <FormControl fullWidth>
           <InputLabel id="order-type-select">Order Type</InputLabel>
           <Select
@@ -73,18 +84,18 @@ const OrderControls = <TData,>({
       <Button
         variant="contained"
         onClick={handleCreateOrder}
-        sx={{ minWidth: 100 }}
+        startIcon={<AddIcon />}
       >
-        <AddIcon /> Create Order
+        Create Order
       </Button>
       <Button
         variant="outlined"
         onClick={handleDeleteSelected}
-        sx={{ minWidth: 100 }}
+        startIcon={<DeleteIcon />}
       >
-        <DeleteIcon /> Delete Selected
+        Delete Selected
       </Button>
-    </div>
+    </Box>
   );
 };
 

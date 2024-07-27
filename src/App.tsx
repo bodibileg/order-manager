@@ -1,9 +1,8 @@
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Home from "./pages/Home";
-import Header from "./components/Header/Header";
 import { Provider } from "react-redux";
 import store from "./store";
+import Pages from "./pages";
 
 function App() {
   const queryClient = new QueryClient();
@@ -11,8 +10,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <Header />
-        <Home />
+        <Pages />
       </Provider>
     </QueryClientProvider>
   );
