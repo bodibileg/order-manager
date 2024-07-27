@@ -17,3 +17,8 @@ thead th {
   top: 0;
   z-index: 1;
 }
+
+#empty-message {
+  text-align: center;
+  width: 100%;
+}

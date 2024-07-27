@@ -8,7 +8,6 @@ import {
   updateOrder,
 } from "../services/orderService";
 import Orders from "../components/Orders/Orders";
-import Header from "../components/Header/Header";
 
 const Home = () => {
   const [orderType, setOrderType] = useState("");
@@ -55,19 +54,16 @@ const Home = () => {
   const error = orderType ? errorFiltered : errorAll;
 
   return (
-    <>
-      <Header title="Home" />
-      <Orders
-        orders={data}
-        loading={isPending}
-        orderType={orderType}
-        error={error}
-        setOrderType={setOrderType}
-        update={update}
-        create={create}
-        deleteSelected={deleteSelected}
-      />
-    </>
+    <Orders
+      orders={data}
+      loading={isPending}
+      orderType={orderType}
+      error={error}
+      setOrderType={setOrderType}
+      update={update}
+      create={create}
+      deleteSelected={deleteSelected}
+    />
   );
 };
 

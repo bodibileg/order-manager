@@ -13,6 +13,7 @@ export const columns = [
   }),
   columnHelper.accessor("orderId", {
     header: "Order ID",
+    filterFn: 'includesString',
   }),
   columnHelper.accessor("createdDate", {
     header: "Creation Date",

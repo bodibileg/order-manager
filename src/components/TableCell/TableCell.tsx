@@ -59,7 +59,7 @@ const TableCell = <TData,>({
         size="small"
       >
         {columnMeta?.options?.map((option: Option) => (
-          <MenuItem value={option.value}>{option.label}</MenuItem>
+          <MenuItem key={option.label} value={option.value}>{option.label}</MenuItem>
         ))}
       </Select>
     ) : (

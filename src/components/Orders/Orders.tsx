@@ -1,28 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
-import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import Skeleton from "@mui/material/Skeleton/Skeleton";
 import {
-  Box,
-  Button,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
+  ColumnFiltersState,
+  getCoreRowModel,
+  getFilteredRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import Skeleton from "@mui/material/Skeleton/Skeleton";
 import { Order } from "../../types";
 import { columns } from "../OrderTable/columns";
 import { validateOrder } from "../../utils/validate";
 import OrderTable from "../OrderTable/OrderTable";
 import "./styles.css";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store";
+import { setDraftOrder } from "../../store/orderSlice";
+import OrderControls from "../OrderControls/OrderControls";
+import OrderNotifications from "../OrderNotifications/OrderNotifications";
 
-interface OrdersProps {
+export interface OrdersProps {
   orders: Order[];
   loading: boolean;
   orderType: string;
@@ -47,6 +42,10 @@ const Orders = ({
   const [data, setData] = useState<Order[]>([]);
   const [originalData, setOriginalData] = useState<Order[]>([]);
   const [delayed, setDelayed] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const draftOrder = useSelector((state: RootState) => state.order.draftOrder);
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     if (orders) {
@@ -82,7 +81,12 @@ const Orders = ({
   const table = useReactTable({
     data: tableData,
     columns: tableColumns,
+    state: {
+      columnFilters,
+    },
     getCoreRowModel: getCoreRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
     enableRowSelection: true,
     meta: {
       editedRows,
@@ -101,6 +105,11 @@ const Orders = ({
         );
       },
       revertRow: (rowIndex: number) => {
+        const revertedOrder = data[rowIndex];
+        if (revertedOrder && !revertedOrder.orderId) {
+          dispatch(setDraftOrder(revertedOrder));
+          setNotificationOpen(true);
+        }
         setData((old) => {
           if (originalData[rowIndex]) {
             return old.map((row, index) =>
@@ -116,7 +125,12 @@ const Orders = ({
         if (!validateOrder(order)) {
           return;
         }
-        order.orderId ? update(order) : create(order);
+        if (order.orderId) {
+          update(order);
+        } else {
+          create(order);
+          dispatch(setDraftOrder(null));
+        }
         setEditedRows((old) => ({
           ...old,
           [rowIndex]: false,
@@ -125,17 +139,13 @@ const Orders = ({
     },
   });
 
-  const handleOrderTypeChange = (event: SelectChangeEvent) => {
-    setOrderType(event.target.value as string);
-  };
-
   const handleCreateOrder = () => {
-    const emptyOrder: Order = {
+    const newOrder: Order = draftOrder || {
       orderType: orderType || "Standard",
       customerName: "",
       createdByUserName: "",
     };
-    setData((old) => [...old, emptyOrder]);
+    setData((old) => [...old, newOrder]);
     setEditedRows((old) => ({
       ...old,
       [data.length]: true,
@@ -147,65 +157,33 @@ const Orders = ({
     const orderIds = selectedRows
       .map((row) => row.original.orderId)
       .filter((orderId): orderId is string => orderId !== undefined);
+    table.resetRowSelection();
     deleteSelected(orderIds);
+  };
+
+  const handleCloseNotification = (
+    _event: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") return;
+    setNotificationOpen(false);
   };
 
   return (
     <>
-      {error && (
-        <div className="error">
-          <span className="error-message">{error.message}</span>
-        </div>
-      )}
-      <div className="controls">
-        <Button
-          variant="contained"
-          onClick={handleCreateOrder}
-          sx={{ minWidth: 100 }}
-        >
-          <AddIcon /> Create Order
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={handleDeleteSelected}
-          sx={{ minWidth: 100 }}
-        >
-          <DeleteIcon /> Delete Selected
-        </Button>
-        <Box sx={{ minWidth: 150 }}>
-          <FormControl fullWidth>
-            <InputLabel id="order-type-select">Order Type</InputLabel>
-            <Select
-              labelId="order-type-select"
-              value={orderType}
-              label="Order Type"
-              onChange={handleOrderTypeChange}
-            >
-              <MenuItem value="">Any</MenuItem>
-              <MenuItem value="Standard">Standard</MenuItem>
-              <MenuItem value="SaleOrder">SaleOrder</MenuItem>
-              <MenuItem value="PurchaseOrder">PurchaseOrder</MenuItem>
-              <MenuItem value="TransferOrder">TransferOrder</MenuItem>
-              <MenuItem value="ReturnOrder">ReturnOrder</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-        <TextField
-          label="Customer Search"
-          variant="outlined"
-          sx={{ minWidth: 150 }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton edge="end">
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </div>
+      <OrderControls
+        orderType={orderType}
+        setOrderType={setOrderType}
+        handleCreateOrder={handleCreateOrder}
+        handleDeleteSelected={handleDeleteSelected}
+        table={table}
+      />
       <OrderTable table={table} />
+      <OrderNotifications
+        error={error}
+        open={notificationOpen}
+        handleClose={handleCloseNotification}
+      />
     </>
   );
 };
